@@ -1,1 +1,690 @@
+from tkinter import Tk
+import tkinter
+import mysql.connector
+from tkinter import *
+from tkinter import messagebox
+from tkinter import ttk
+import tkinter.messagebox as tmsg
+window=Tk()
+window.geometry("600x600")
+window.configure(bg="#1ABC9C")
+window.title ("Medical System")
+bg_color = "#074463"
+fg_color = "white"
+lbl_color = 'white'
+mydatabase=mysql.connector.connect(host="localhost",user="root",password="1711",port=3306,database="SS_Medical_store_database")
+cursor=mydatabase.cursor()
+#query1="create database SS_Medical_store_Database";
+#query2="create table SignUp_data(Name varchar(30),MobileNO varchar(30),username varchar(30)primary key,password varchar(30)unique)";
+#cursor.execute(query1)
+#cursor.execute(query2)
+title = Label(window,text = "Pleased select appropriate option",bd = 12,relief = GROOVE,fg = fg_color,bg = bg_color,font=("times new roman",30,"bold"),pady = 3)
+title.grid()
+lb1=Label(window,text="",bg="#1ABC9C")
+lb1.grid()
+
+############# Register Windoew ##############
+def Register():
+    register_window=Tk()
+    register_window.geometry("600x600")
+    register_window.configure(bg="#F1C40F")
+    register_window.title("Regitser window")
+    bg_color = "#074463"
+    fg_color = "white"
+    lbl_color = 'white'
+    username = StringVar()
+    password = StringVar()
+    Name = StringVar()
+    MobileNO = StringVar()
+    ConfirmedPassw = StringVar()
+    title = Label(register_window,text="SignUp", bd=12, relief=GROOVE, fg=fg_color, bg=bg_color,font=("times new roman", 30, "bold"), pady=3)
+    title.grid()
+    lb1 = Label(register_window, text="", bg="#F1C40F")
+    lb1.grid()
+    Name_label=Label(register_window, text="Name:-",font=("Georgia", 20),bg="#F9E79F")
+    Name_label.grid()
+    lb2=Label(register_window, text="", bg="#F1C40F")
+    lb2.grid()
+    n_entry = Entry(register_window,width="50",textvariable=Name,borderwidth=5)
+    n_entry.grid(row=2,column=2)
+    lb3=Label(register_window, text="", bg="#F1C40F")
+    lb3.grid()
+    MobileNO_label=Label(register_window, text="MobileNo:-", font=("Georgia", 20), bg="#F9E79F")
+    MobileNO_label.grid()
+    lb4=Label(register_window, text="", bg="#F1C40F")
+    lb4.grid()
+    m_entry = Entry(register_window, textvariable=MobileNO, width="50", borderwidth=3)
+    m_entry.grid(row=5,column=2)
+    lb5=Label(register_window, text="", bg="#F1C40F")
+    lb5.grid()
+    username_label=Label(register_window, text="Username:-", font=("Georgia", 20), bg="#F9E79F")
+    username_label.grid()
+    lb6=Label(register_window, text="", bg="#F1C40F")
+    lb6.grid()
+    u_entry = Entry(register_window, textvariable=username, width="50", borderwidth=3)
+    u_entry.grid(row=8,column=2)
+    lb7=Label(register_window, text="", bg="#F1C40F")
+    lb7.grid()
+    password_label=Label(register_window, text="Password:-", font=("Georgia", 20), bg="#F9E79F")
+    password_label.grid()
+    lb8=Label(register_window, text="", bg="#F1C40F")
+    lb8.grid()
+    p_entry = Entry(register_window, textvariable=password, width="50",borderwidth=3,show="*")
+    p_entry.grid(row=11,column=2)
+    lb9=Label(register_window, text="", bg="#F1C40F")
+    lb9.grid()
+    retype_label=Label(register_window, text="Retype Password:-", font=("Georgia", 20), bg="#F9E79F")
+    retype_label.grid()
+    lb10=Label(register_window, text="", bg="#F1C40F")
+    lb10.grid()
+    c_entry = Entry(register_window, textvariable=ConfirmedPassw, width="50", borderwidth=3,show="*")
+    c_entry.grid(row=14,column=2)
+    lb11=Label(register_window, text="", bg="#F1C40F")
+    lb11.grid()
+    def data_saved():
+        mydatabase = mysql.connector.connect(host="localhost", user="root", password="1711", port=3306, database="SS_Medical_store_database")
+        cursor = mydatabase.cursor()
+        NameD = n_entry.get()
+        MobileNoD = m_entry.get()
+        UserNameD = u_entry.get()
+        PasswordD = p_entry.get()
+        ConfirmedPasswD = c_entry.get()
+        query=("select * from SignUp_Data")
+        cursor.execute(query)
+        user = cursor.fetchall()
+        if NameD == "" or MobileNoD == "" or UserNameD == "" or PasswordD == "":
+            messagebox.showinfo("info","Please complete the required field!")
+        elif(PasswordD!=ConfirmedPasswD):
+            messagebox.showinfo("info", "Password do not match")
+        else:
+            for (Name, MobileNO, username, password) in user:
+                if(username==UserNameD):
+                    messagebox.showinfo("info", "Check username, Its already taken!!")
+                elif(PasswordD==ConfirmedPasswD):
+                    query = ("insert into SignUp_data(Name,MobileNO,username,password) values('{}','{}','{}','{}')".format(NameD,MobileNoD,UserNameD, PasswordD))
+                    cursor.execute(query)
+                    mydatabase.commit()
+                    messagebox.showinfo("info","signup Successfull!!")
+                    register_window.destroy()
+                    Login()
+
+    register_button= Button(register_window, text="Register",bg=bg_color, fg=fg_color, font=("lucida", 12, "bold"), bd=7, relief=GROOVE,command=data_saved)
+    register_button.grid()
+    register_window.mainloop()
+
+
+register_button=Button(window,text="Register",width="30",height="1",font=("Georgia",20),bg="blue",command=Register)
+register_button.grid()
+lb2=Label(window,text="",bg="#1ABC9C")
+lb2.grid()
+
+
+
+############# Login Windoew ##############
+
+def Login():
+    login_window= Tk()
+    login_window.geometry("600x600")
+    login_window.title("Login Window")
+    login_window.configure(bg="#AF7AC5")
+    username = StringVar()
+    password = StringVar()
+    bg_color = "#074463"
+    fg_color = "white"
+    lbl_color = 'white'
+    title = Label(login_window, text="LoginUp", bd=12, relief=GROOVE, fg=fg_color, bg=bg_color, font=("times new roman", 30, "bold"), pady=3)
+    title.grid()
+    lb1= Label(login_window, text="", bg="#AF7AC5")
+    lb1.grid()
+    username1_label = Label(login_window, text="Username:-", font=("Georgia", 20), bg="#F9E79F")
+    username1_label.grid()
+    lb2=Label(login_window, text="", bg="#AF7AC5")
+    lb2.grid()
+    u1_entry=Entry(login_window, textvariable=username, width="50", borderwidth=3)
+    u1_entry.grid(row=2,column=2)
+    lb3= Label(login_window, text="", bg="#AF7AC5")
+    lb3.grid()
+    password1_label = Label(login_window, text="Password:-", font=("Georgia", 20), bg="#F9E79F")
+    password1_label.grid()
+    lb4= Label(login_window, text="", bg="#AF7AC5")
+    lb4.grid()
+    p1_entry= Entry(login_window, textvariable=password, width="50", borderwidth=3,show="*")
+    p1_entry.grid(row=5, column=2)
+    lb5= Label(login_window, text="", bg="#AF7AC5")
+    lb5.grid()
+
+    ################################ Main Menu Windoew ####################################
+    def menu():
+        messagebox.showinfo("info", "Welcome to the ss medical!!")
+        main_window=Tk()
+        main_window.geometry("800x400")
+        main_window.configure(bg="#F1C40F")
+        main_window.title("Menu Window")
+        main_window.configure(bg="#856ff8")
+        bg_color = "#074463"
+        fg_color = "white"
+        lbl_color = 'white'
+        title=Label(main_window, text="Welcome To SS Medical", bd=12, relief=GROOVE, fg=fg_color, bg=bg_color,font=("times new roman", 30, "bold"), pady=3)
+        title.grid()
+        lb7=Label(main_window, text="", bg="#856ff8")
+        lb7.grid()
+        lb6=Label(main_window, text="", bg="#856ff8")
+        lb6.grid()
+        lb5=Label(main_window, text="",bg="#856ff8")
+        lb5.grid()
+        lb3 = Label(main_window, text="", bg="#856ff8")
+        lb3.grid()
+        lb4 = Label(main_window, text="", bg="#856ff8")
+        lb4.grid()
+
+        ###################### Employeee Management #########################
+
+        def Employee_mangement():
+            employee_window = Tk()
+            employee_window.geometry("1000x1000")
+            employee_window.title("Employee management Window")
+            employee_window.configure(bg="#074463")
+            mydatabase = mysql.connector.connect(host="localhost", user="root", password="1711", port=3306,database="SS_Medical_store_database")
+            cursor = mydatabase.cursor()
+            bg_color = "#074463"
+            fg_color = "white"
+            lbl_color = 'white'
+            name = StringVar()
+            phonenumber= StringVar()
+            age=StringVar()
+            title = Label(employee_window, text="Employee Information", bd=12, relief=GROOVE, fg=fg_color, bg=bg_color,font=("times new roman", 30, "bold"), pady=3)
+            title.grid()
+            lb1= Label(employee_window, text="", bg="#074463")
+            lb1.grid()
+            #EmployeeIdNo_label = Label(employee_window, text="Id No:-", font=("Georgia", 20), bg="#F9E79F")
+            #EmployeeIdNo_label.grid()
+            lb8 = Label(employee_window, text="", bg="#074463")
+            lb8.grid()
+            #y= random.randint(1000,9999)
+            #c_bill_no =StringVar()
+            #c_bill_no.set(str(y))
+            #print(c_bill_no)
+            #Id_entry=Entry(employee_window,textvariable=c_bill_no,bd=8)
+            #Id_entry.grid(row=2, column=2)
+            name_label = Label(employee_window, text="Name:-", font=("Georgia",20), bg="#F9E79F")
+            name_label.grid()
+            lb2 = Label(employee_window, text="", bg="#074463")
+            lb2.grid()
+            name_entry=Entry(employee_window, textvariable=name, width="50", borderwidth=3)
+            name_entry.grid(row=3,column=2)
+            Phone_label = Label(employee_window, text="PhoneNumber:-", font=("Georgia", 20), bg="#F9E79F")
+            Phone_label.grid()
+            lb4= Label(employee_window, text="", bg="#074463")
+            lb4.grid()
+            phone_entry=Entry(employee_window, textvariable=phonenumber, width="50", borderwidth=3)
+            phone_entry.grid(row=5,column=2)
+            salary_label= Label(employee_window, text="Age:-", font=("Georgia", 20), bg="#F9E79F")
+            salary_label.grid()
+            lb5= Label(employee_window, text="", bg="#074463")
+            lb5.grid()
+            Age_entry= Entry(employee_window, textvariable=age, width="50", borderwidth=3)
+            Age_entry.grid(row=7,column=2)
+            Address_label = Label(employee_window, text="Address:-", font=("Georgia", 20), bg="#F9E79F")
+            Address_label.grid()
+            Address_text=Text(employee_window,height=3,width=40,bg="light yellow")
+            Address_text.grid(row=9,column=2)
+            lb3 = Label(employee_window, text="", bg="#074463")
+            lb3.grid()
+            #################### employee data saved #########################
+
+            def saved_employee_data():
+                #query1="create table Employee_data1(Name varchar(30),MobileNO varchar(30),Age varchar(30),Address varchar(70))";
+                #cursor.execute(query1)
+                #IdNo=Id_entry.get()
+                Employee_Name=name_entry.get()
+                Employee_Phone=phone_entry.get()
+                Employee_Age=Age_entry.get()
+                Employee_Address=Address_text.get("1.0","end-1c")
+                if Employee_Name== "" or Employee_Phone== "" or Employee_Age== "" or Employee_Address== "":
+                    messagebox.showinfo("info", "Please complete the required field!")
+                else:
+                    query = ("insert into Employee_data1(Name,MobileNo,Age,Address) values('{}','{}','{}','{}')".format(Employee_Name,Employee_Phone,Employee_Age,Employee_Address))
+                    cursor.execute(query)
+                    mydatabase.commit()
+                    messagebox.showinfo("info", "Data Saved Successfully!!")
+
+
+
+            Save_button=Button(employee_window, text="save", font=("lucida", 12, "bold"), bd=10, relief=GROOVE,command=saved_employee_data)
+            Save_button.grid()
+
+            ###################### Back Button ###########################
+            def Back():
+                employee_window.destroy()
+                menu()
+
+
+            Back_button = Button(employee_window, text="Back", font=("lucida", 12, "bold"), bd=10,relief=GROOVE, command=Back)
+            Back_button.grid(row=11,column=2)
+            lb6= Label(employee_window, text="", bg="#074463")
+            lb6.grid()
+            lb7= Label(employee_window, text="", bg="#074463")
+            lb7.grid()
+            SearchEmp=StringVar()
+            Search_Entry= Entry(employee_window, textvariable=SearchEmp, width="50", borderwidth=3,bd=10)
+            Search_Entry.grid()
+
+            #################### Employee Search ##########bg###########
+            output=Text(employee_window,height=10,width=30,bg="light cyan")
+            output.grid()
+
+            def employee_information():
+                Search_data_entery=Search_Entry.get()
+                mydatabase = mysql.connector.connect(host="localhost", user="root", password="1711", port=3306,database="SS_Medical_store_database")
+                cursor = mydatabase.cursor()
+                #query='select Name,MobileNo,Age,Address from Employee_data1 where Name="Search_data_entery";'
+                query="select * from Employee_data1"
+                cursor.execute(query)
+                Emp=cursor.fetchall()
+                if (Search_data_entery == ""):
+                    messagebox.showinfo("info", "Type Name of Employee their information you will be found!!")
+                else:
+                    for index, (Name, MobileNo, Age, Address) in enumerate(Emp):
+                        if (Search_data_entery == Name):
+                            output.delete('1.0', END)
+                            output.insert(END, "#####Employee Details#####\n")
+                            output.insert(END,f"EmpNo:{str(index + 1)} \nName:-{str(Name)} \nMobileNo:-{str(MobileNo)} \nAge:-{str(Age)} \nAddress:-{str(Address)}")
+                            mydatabase.commit()
+
+
+
+
+
+            Search_Button= Button(employee_window, text="Search", font=("lucida", 12, "bold"), bd=10, relief=GROOVE,command=employee_information)
+            Search_Button.grid(row=14, column=2)
+
+            def clear():
+                output.delete('1.0', END)
+
+            Clear_Button= Button(employee_window, text="Clear", font=("lucida", 12, "bold"), bd=10, relief=GROOVE,command=clear)
+            Clear_Button.grid(row=14, column=4)
+
+            main_window.destroy()
+            employee_window.mainloop()
+
+        Employee_button = Button(main_window, text="Employee Management",font=("lucida", 12, "bold"), bd=10, relief=GROOVE,command=Employee_mangement)
+        Employee_button.grid()
+
+        ####################### Stock Buttton #########################
+        def Stock_management():
+            stock_window=Tk()
+            stock_window.geometry("800x800")
+            stock_window.title("Login Window")
+            stock_window.configure(bg="#00ffff")
+            title = Label(stock_window, text="Add New Stock", bd=12, relief=GROOVE, fg=fg_color, bg=bg_color,font=("times new roman", 30, "bold"), pady=3)
+            title.grid()
+            lb1 = Label(stock_window, text="", bg="#00ffff")
+            lb1.grid()
+            Medicine_name_label = Label(stock_window, text="Medicine Name:-", font=("Georgia", 20), bg="#F9E79F")
+            Medicine_name_label.grid()
+            MedicineEmp= StringVar()
+            Medicine_Name_Entry = Entry(stock_window, textvariable=MedicineEmp, width="50", borderwidth=3)
+            Medicine_Name_Entry.grid(row=2,column=2)
+            lb2= Label(stock_window, text="", bg="#00ffff")
+            lb2.grid()
+            Medicine_code_label = Label(stock_window, text="Medicine Code:-", font=("Georgia", 20), bg="#F9E79F")
+            Medicine_code_label.grid()
+            MedicineCodeEmp =IntVar()
+            Medicine_code_Entry = Entry(stock_window, textvariable=MedicineCodeEmp, width="50", borderwidth=3)
+            Medicine_code_Entry.grid(row=4, column=2)
+            lb3= Label(stock_window, text="", bg="#00ffff")
+            lb3.grid()
+            Expire_Date_label = Label(stock_window, text="Expire Date:-", font=("Georgia", 20), bg="#F9E79F")
+            Expire_Date_label.grid()
+            MedicineDateEmp=IntVar()
+            Expire_Date_Entry = Entry(stock_window, textvariable=MedicineDateEmp, width="50", borderwidth=3)
+            Expire_Date_Entry.grid(row=6, column=2)
+            lb4= Label(stock_window, text="", bg="#00ffff")
+            lb4.grid()
+            Cost_label = Label(stock_window, text="Cost of Medicine:-", font=("Georgia", 20), bg="#F9E79F")
+            Cost_label.grid()
+            CostMedicine=IntVar()
+            Cost_Entry = Entry(stock_window, textvariable=CostMedicine, width="50", borderwidth=3)
+            Cost_Entry .grid(row=8, column=2)
+            lb5= Label(stock_window, text="", bg="#00ffff")
+            lb5.grid()
+
+            ######################## Medicine Database ##########################
+            def Medicine_Data():
+                mydatabase = mysql.connector.connect(host="localhost", user="root", password="1711", port=3306,database="SS_Medical_store_database")
+                cursor = mydatabase.cursor()
+                #query="create table medicines_details(medicine_name varchar(30),medicine_code int,Expire_Date varchar(10),total_cost float)"
+                #cursor.execute(query)
+                MedicineName=Medicine_Name_Entry.get()
+                MedicineCode=Medicine_code_Entry.get()
+                MedicineDate=Expire_Date_Entry.get()
+                MedicineCost=Cost_Entry.get()
+                if MedicineName== "" or MedicineCode== "" or MedicineDate== "" or MedicineCost== "":
+                    messagebox.showinfo("info", "Please complete the required field!")
+                else:
+                    query =("insert into medicines_details(medicine_name,medicine_code,Expire_Date,total_cost) values('{}','{}','{}','{}')".format(MedicineName,MedicineCode,MedicineDate,MedicineCost))
+                    cursor.execute(query)
+                    mydatabase.commit()
+                    messagebox.showinfo("info","Data saved successfully!!")
+
+
+            MedicineDetailsSave_Button = Button(stock_window, text="Save", font=("lucida", 12, "bold"), bd=10, relief=GROOVE,command=Medicine_Data)
+            MedicineDetailsSave_Button .grid()
+
+            def Backintostockwindow():
+                stock_window.destroy()
+                menu()
+
+            MedicineDetailsBack_Button = Button(stock_window, text="Back", font=("lucida", 12, "bold"), bd=10,relief=GROOVE, command=Backintostockwindow)
+            MedicineDetailsBack_Button.grid(row=10,column=2)
+            lb6= Label(stock_window, text="", bg="#00ffff")
+            lb6.grid()
+            SearchMedicine=StringVar()
+            SearchMedicine_Entry=Entry(stock_window, textvariable=SearchMedicine , width="50", borderwidth=3, bd=10)
+            SearchMedicine_Entry.grid()
+
+            #################### Search Medicines ################
+            def searchmedicines():
+                print("Hello")
+                searchdata=SearchMedicine_Entry.get()
+                mydatabase = mysql.connector.connect(host="localhost", user="root", password="1711", port=3306,database="SS_Medical_store_database")
+                cursor = mydatabase.cursor()
+                query = "select * from medicines_details"
+                cursor.execute(query)
+                Emp=cursor.fetchall()
+                if (searchdata== ""):
+                    messagebox.showinfo("info", "Type Name of Employee their information you will be found!!")
+                else:
+                    for index,(medicine_name,medicine_code,Expire_Date,total_cost) in enumerate(Emp):
+                        if (searchdata==medicine_name):
+                            searchoutput.delete('1.0', END)
+                            searchoutput.insert(END, "#####Employee Details#####\n")
+                            searchoutput.insert(END,f"Medicine No:{str(index+1)} \nMedicine Name:-{str(medicine_name)} \nMedicine Code:-{str(medicine_code)} \nExpire Date:-{str(Expire_Date)} \nCost:-{str(total_cost)}")
+                            mydatabase.commit()
+
+
+            MedicineSearch_Button = Button(stock_window, text="Search", font=("lucida", 12, "bold"), bd=10,relief=GROOVE,command=searchmedicines)
+            MedicineSearch_Button.grid(row=12, column=2)
+
+            ####################### Clear ########################
+            def clearmedicines():
+                searchoutput.delete('1.0', END)
+
+            MedicineClear_Button = Button(stock_window, text="Clear", font=("lucida", 12, "bold"), bd=10,relief=GROOVE, command=clearmedicines)
+            MedicineClear_Button.grid(row=12, column=3)
+            searchoutput= Text(stock_window, height=10, width=30, bg="light cyan")
+            searchoutput .grid()
+            main_window.destroy()
+            stock_window.mainloop()
+
+
+        Stock_button=Button(main_window, text="Stock Management",font=("lucida", 12, "bold"), bd=10,relief=GROOVE,command=Stock_management)
+        Stock_button.grid(row=6,column=2)
+        lb1= Label(main_window, text="", bg="#856ff8")
+        lb1.grid()
+        lb2= Label(main_window, text="", bg="#856ff8")
+        lb2.grid()
+
+        #################### Billing System ######################
+        def BilingSystem():
+            root = Tk()
+            w, h = root.winfo_screenwidth(), root.winfo_screenheight()
+            root.geometry("%dx%d+0+0" % (w, h))
+            root.title("Welcome to SS Medical")
+            # ================Title==============#
+            title_frame = Frame(root, bd=8, bg="yellow", relief=GROOVE)
+            title_frame.pack(side=TOP, fill="x")
+            title_frame = Frame(root, bd=8, bg="yellow", relief=GROOVE)
+            title_frame.pack(side=TOP, fill="x")
+            title_label = Label(title_frame, text="SS Medical",font=("times new roman", 20, "bold"), bg="yellow", fg="red", pady=5)
+            title_label.pack()
+            # ==============Customer=============#
+            customer_frame = LabelFrame(root, text="Customer Details", font=("times new roman", 15, "bold"),bd=8, bg="lightblue", relief=GROOVE)
+            customer_frame.pack(side=TOP, fill="x")
+            customer_name_label = Label(customer_frame, text="Name",font=("arial", 15, "bold"), bg="lightblue", fg="blue")
+            customer_name_label.grid(row=0, column=0)
+            customerName = StringVar()
+            customerName.set("")
+            customer_name_entry = Entry(customer_frame, width=20, font="arial 15", bd=5,textvariable=customerName)
+            customer_name_entry.grid(row=0, column=1, padx=50)
+            customer_contact_label = Label(customer_frame, text="Contact",font=("arial", 15, "bold"), bg="lightblue", fg="blue")
+            customer_contact_label.grid(row=0, column=2)
+            customerContact = StringVar()
+            customerContact.set("")
+            customer_contact_entry = Entry(customer_frame, width=20, font="arial 15", bd=5,textvariable=customerContact)
+            customer_contact_entry.grid(row=0, column=3, padx=50)
+
+
+
+
+            ############################menu frame#######################
+            menu_frame=Frame(root, bd=8, bg="lightgreen", relief=GROOVE)
+            menu_frame.place(x=0, y=125, height=585, width=680)
+            menu_label = Label(menu_frame, text="Bill",font=("times new roman", 20, "bold"), bg="lightgreen", fg="red", pady=0)
+            menu_label.grid()
+            rate_label = Label(menu_frame, text="Medicine Rate:-", font=("times new roman", 15, "bold"), bg="lightgreen", fg="red",pady=0)
+            rate_label.grid()
+            medicine_rate=IntVar()
+            medicine_rate_entery=Entry(menu_frame, font="arial 12", textvariable=medicine_rate, width=10)
+            medicine_rate_entery.grid()
+            la1=Label(menu_frame,text="",bg="lightgreen")
+            la1.grid()
+            medicine_quntity=IntVar()
+            medicine_quntity_label = Label(menu_frame, text="Medicine Quantity:-", font=("times new roman", 15, "bold"), bg="lightgreen", fg="red",pady=0)
+            medicine_quntity_label.grid()
+            item_quantity = Entry(menu_frame, font="arial 12", textvariable=medicine_quntity, width=10)
+            item_quantity.grid()
+            la2= Label(menu_frame, text="", bg="lightgreen")
+            la2.grid()
+            total_price_label = Label(menu_frame, text="Total:-", font=("times new roman", 15, "bold"),bg="lightgreen", fg="red", pady=0)
+            total_price_label.grid()
+            la3= Label(menu_frame, text="", bg="lightgreen")
+            la3.grid()
+            totalPrice_text_Entry=Entry(menu_frame,font="arial 12",width=10)
+            totalPrice_text_Entry.grid()
+            la4= Label(menu_frame, text="", bg="lightgreen")
+            la4.grid()
+
+
+            # ===============Item Frame=============#
+            item_frame = Frame(root, bd=8, bg="lightgreen", relief=GROOVE)
+            item_frame.place(x=680, y=125, height=230, width=680)
+            item_title_label = Label(item_frame, text="Item",font=("times new roman", 20, "bold"), bg="lightgreen", fg="red")
+            item_title_label.pack(side=TOP, fill="x")
+            item_frame2 = Frame(item_frame, bg="lightgreen")
+            item_frame2.pack(fill=X)
+            item_name_label = Label(item_frame2, text="Medicine Name",font=("arial", 12, "bold"), bg="lightgreen", fg="blue")
+            item_name_label.grid(row=0, column=0)
+            itemCategory = StringVar()
+            itemCategory.set("")
+            itemName = StringVar()
+            item_name = Entry(item_frame2, font="arial 12", textvariable=itemName,width=25)
+            item_name.grid(row=0, column=1, padx=10)
+            itemcode= IntVar()
+            item_rate_label = Label(item_frame2, text="Medicine Code",font=("arial", 12, "bold"), bg="lightgreen", fg="blue")
+            item_rate_label.grid(row=0, column=2, padx=40)
+            item_rate = Entry(item_frame2, font="arial 12", textvariable=itemcode, width=10)
+            item_rate.grid(row=0, column=3, padx=10)
+
+            #item_quantity_label = Label(item_frame2, text="Quantity",font=("arial", 12, "bold"), bg="lightgreen", fg="blue")
+            #item_quantity_label.grid(row=1, column=0, padx=30, pady=15)
+            itemQuantity =StringVar()
+            itemQuantity.set("")
+            #item_quantity = Entry(item_frame2, font="arial 12", textvariable=itemQuantity, width=10)
+            #item_quantity.grid(row=1,column=1)
+            item_frame3 = Frame(item_frame, bg="lightgreen")
+            item_frame3.pack(fill=X)
+
+            ######################################
+            def add_item_operation():
+                name= item_name.get()
+                rate= item_rate.get()
+                quantity=item_quantity.get()
+                medicineRate=medicine_rate_entery.get()
+
+                searchoutput.delete('1.0', END)
+                searchoutput.insert(END, "##### Mediciens Order #####\n")
+                searchoutput.insert(END,f"Medicine Name:-{name} \nMedicine Code:-{rate} \nQuantity:-{quantity} \nRate:-{medicineRate}")
+
+
+            add_button =Button(item_frame3, text="Add Item",command=add_item_operation)
+            add_button.grid(row=0, column=0,padx=40,pady=30)
+
+            ######################################
+            def Backorder():
+                root.destroy()
+
+            Back_button = ttk.Button(item_frame3, text="Back", command=Backorder)
+            Back_button.grid(row=0,column=1,padx=40,pady=30)
+            # =================Order Frame=====================#
+            order_frame = Frame(root, bd=8, bg="lightgreen", relief=GROOVE)
+            order_frame.place(x=680, y=335, height=370, width=680)
+            order_title_label = Label(order_frame, text="Your Order",font=("times new roman", 20, "bold"), bg="lightgreen", fg="red")
+            order_title_label.pack(side=TOP, fill="x")
+
+
+
+            ############################## Order Tabel ###################################
+            order_tabel_frame = Frame(order_frame)
+            order_tabel_frame.place(x=0, y=40, height=260, width=680)
+            searchoutput= Text(order_tabel_frame,height=30, width=70,bg="light cyan")
+            searchoutput .grid()
+
+            ###########################################################################################
+            #total_price_label = Label(order_frame, text="Total Price",font=("arial", 12, "bold"), bg="lightgreen", fg="blue")
+            #total_price_label.pack(side=LEFT, anchor=SW, padx=20, pady=10)
+            #totalPrice = StringVar()
+            #totalPrice.set("")
+            #totalPrice_text=Text(order_frame, height=1, width=5, bg="light yellow")
+            #totalPrice_text.pack(side=LEFT, anchor=SW, padx=0, pady=10)
+            #total_price_entry = Entry(order_frame, font="arial 12", textvariable=totalPrice,width=10)
+            #total_price_entry.pack(side=LEFT, anchor=SW, padx=0, pady=10)
+
+
+            ###################### Bill generating ########################
+            def billgenerating():
+                customer_name = customer_name_entry.get()
+                customer_contact = customer_contact_entry.get()
+                bill_window= Tk()
+                bill_window.geometry("800x800")
+                bill_window.title("Bill Window")
+                bill_window.configure(bg="#00ffff")
+                Billoutput=Text(bill_window , height=30, width=70, bg="light cyan")
+                Billoutput.grid()
+                name = item_name.get()
+                rate = item_rate.get()
+                quantity = item_quantity.get()
+                medicineRate=medicine_rate_entery.get()
+                Total_Price=totalPrice_text_Entry.get()
+                Billoutput.delete('1.0', END)
+                Billoutput.insert(END, "######################### Mediciens Order #############################\n")
+                Billoutput.insert(END, "##### SS Medical Store #####\n")
+                Billoutput.insert(END, "##### Sec-8,Kamothe,Navi Mumbai 410206 #####\n")
+                Billoutput.insert(END, f"Customer Name:-{customer_name} \ncustomer contact:-{customer_contact} \nMedicine Name:-{name} \nMedicine Code:-{rate} \nMedicine rate:-{medicineRate} \nQuantity:-{quantity} \nTotal Amount:-{Total_Price}")
+
+                ################## save bill ####################
+                def save_bill_database():
+                    customer_name = customer_name_entry.get()
+                    customer_contact = customer_contact_entry.get()
+                    name = item_name.get()
+                    rate = item_rate.get()
+                    quantity = item_quantity.get()
+                    medicineRate = medicine_rate_entery.get()
+                    Total_Price = totalPrice_text_Entry.get()
+                    mydatabase = mysql.connector.connect(host="localhost", user="root", password="1711", port=3306,database="SS_Medical_store_database")
+                    cursor = mydatabase.cursor()
+                    #query="create table Customer_details(Customer_name varchar(30),Customer_Contact varchar(20),medicine_name varchar(20),medicine_code int,medicine_rate float,medicine_quantity int,Total_amount float)"
+                    #cursor.execute(query)
+                    query=("insert into Customer_details(Customer_name,Customer_Contact,medicine_name,medicine_code,medicine_rate,medicine_quantity,Total_amount) values('{}','{}','{}','{}','{}','{}','{}')".format(customer_name,customer_contact,name,rate,quantity,medicineRate,Total_Price))
+                    cursor.execute(query)
+                    mydatabase.commit()
+                    messagebox.showinfo("info","Data saved successfully!!")
+
+
+
+                save_billButton= Button(bill_window, text="Save Bill", font=("lucida", 12, "bold"), bd=10, relief=GROOVE,command=save_bill_database)
+                save_billButton.grid()
+                la1= Label(bill_window, text="", bg="#00ffff")
+                la1.grid()
+
+
+                ################################
+                def deletewindow():
+                    bill_window.destroy()
+
+                exit_billButton = Button(bill_window, text="Back", font=("lucida", 12, "bold"), bd=10,relief=GROOVE, command=deletewindow)
+                exit_billButton.grid()
+
+
+
+
+            bill_button = ttk.Button(order_frame, text="Bill", width=8,command=billgenerating)
+            bill_button.pack(side=LEFT, anchor=SW, padx=80, pady=10)
+
+            ######################################
+            def cancelorder():
+                searchoutput.delete('1.0', END)
+
+            cancel_button = ttk.Button(order_frame, text="Cancel Order",command=cancelorder)
+            cancel_button.pack(side=LEFT, anchor=SW, padx=20, pady=10)
+            root.mainloop()
+
+
+
+
+        Billing_button = Button(main_window, text="Biling System",font=("lucida", 12, "bold"), bd=10,relief=GROOVE,command=BilingSystem)
+        Billing_button.grid()
+        lb8= Label(main_window, text="", bg="#856ff8")
+        lb8.grid()
+        lb9=Label(main_window, text="", bg="#856ff8")
+        lb9.grid()
+
+        ######################  Back button ######################
+        def Back():
+            main_window.destroy()
+            Login()
+
+        Back_button = Button(main_window, text="Back", font=("lucida", 12, "bold"),fg=fg_color, bg=bg_color, bd=10, relief=GROOVE,command=Back)
+        Back_button.grid(row=9,column=2)
+
+
+        login_window.destroy()
+        main_window.mainloop()
+
+    def Login_data():
+        mydatabase = mysql.connector.connect(host="localhost", user="root", password="1711", port=3306, database="SS_Medical_store_database")
+        cursor = mydatabase.cursor()
+        username_verify=u1_entry.get()
+        password_verify=p1_entry.get()
+        query3 =("select * from SignUp_Data")
+        cursor.execute(query3)
+        user=cursor.fetchall()
+        #print(user)
+        if username_verify=="" or password_verify=="":
+            messagebox.showinfo("info", "Please complete the required field!")
+        else:
+            for (Name, MobileNO, username, password) in user:
+                if(username!=username_verify and password!=password_verify):
+                    messagebox.showinfo("info", "Check username and paswword!!")
+                elif(username==username_verify and password==password_verify):
+                    messagebox.showinfo("info", "Login Successfull!!")
+                    menu()
+
+
+    login_button = Button(login_window, text="Login", bg=bg_color, fg=fg_color, font=("lucida", 12, "bold"),bd=7, relief=GROOVE,command=Login_data)
+    login_button.grid()
+    login_window.mainloop()
+
+login_button=Button(window,text="Login",width="30",height="1",font=("Georgia",20),bg="orange",command=Login)
+login_button.grid()
+lb3=Label(window,text="",bg="#1ABC9C")
+lb3.grid()
+
+def Exit():
+    window.destroy()
+
+ExitB = tkinter.Button(window,text="Exit",width="30",height="1",font=("Georgia",20),bg="red",command=Exit)
+ExitB.grid()
+
+window.mainloop()
 
